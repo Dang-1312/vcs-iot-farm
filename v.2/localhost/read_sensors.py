@@ -13,6 +13,7 @@ import read_wd5
 import read_rtu as rika
 import aws_iot_trans as aws
 import control_watering as watering
+import aws_iot_trans as MQTT_publish
 
 # Ham in ra time now
 def time_now():
@@ -83,7 +84,7 @@ while True:
     
     
     # Check request and run control_watering
-    
+    MQTT_publish.publish_data(message)
     # Auto watering (Demo)
     if Vol<=60:
         list=watering.watering(list[0],list[1],list[2])
