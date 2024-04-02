@@ -25,7 +25,7 @@ def uno220gpio():
     return values
 
 
-def water_level(num,old,v3):                    #  Tank number: num; Previous water leve: old; Status valve 4: v3
+def water_level(num,old,v4):                    #  Tank number: num; Previous water level: old; Status valve 4: v4
     values = uno220gpio()
     
     for i in range(0,8): 
@@ -40,9 +40,9 @@ def water_level(num,old,v3):                    #  Tank number: num; Previous wa
         if values[0]=='1':                        # Buoy 1 reply 1 <=> water's level 2 (mid)
             return 2
         elif values[0]=='0':                      # Buoy 1 reply 0 (2 scenarios: full or low)
-            if (old==2 or old==3) and v3==1 :   # The previous water level of the float is 2 or 3, and the electric valve is open to drain water into the tank => (full)
+            if (old==2 or old==3) and v4==1 :   # The previous water level of the float is 2 or 3, and the electric valve is open to drain water into the tank => (full)
                 return 3
-            elif (old==2 and v3==0) or old==1:  # The previous water level of the float is 1 or (2 and the electric valve is close)  => (low)
+            elif (old==2 and v4==0) or old==1:  # The previous water level of the float is 1 or (2 and the electric valve is close)  => (low)
                 return 1
     elif num==2:                                # Request measure water's level tank 2
         if values[1]=='1':                        # Buoy 2 reply 1 <=> water level 1 (low)
