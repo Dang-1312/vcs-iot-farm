@@ -83,10 +83,8 @@ while True:
     
     
     # Check request and run control_watering
-    pl = aws.receive()          # Receive payload from aws iot broker
-    if not pl == None :         # Check payload request 
-        list = pl
     
+    # Auto watering (Demo)
     if Vol<=60:
         list=watering.watering(list[0],list[1],list[2])
     
