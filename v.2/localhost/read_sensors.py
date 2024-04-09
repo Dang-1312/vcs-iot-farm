@@ -1,25 +1,10 @@
 import time
-import datetime
-import json
-import psycopg2
-
 
 import pymodbus.client as ModbusClient
 from pymodbus.transaction import ModbusRtuFramer
-from pymodbus import pymodbus_apply_logging_config
 
 # import my code
 import read_wd5
-import read_rtu as rika
-import aws_iot_trans as aws
-import control_watering as watering
-import aws_iot_trans as MQTT_publish
-
-# Ham in ra time now
-def time_now():
-    d = datetime.datetime.now()
-    print(d.strftime('%Y/%m/%d %H:%M:%S'))
-    
 
 # Khai bao thong so va connect voi cac sensors
 # CO2 sensor RK300-03
@@ -38,26 +23,59 @@ num_registers_3 = 0x01
 slave_address_3 = 0x03
 
 
-# Main loop program
-while True:
-    # Start time
-    time_now()
-    start=time.time()
+def read_sensor_rtu(client, register_address,num_registers,slave_address):
+    # Send request to device and wait return
+    response = client.read_holding_registers(register_address,num_registers,slave_address)
     
+    # Check error and 
+    if not response.isError():
+        list_data = response.registers
+        print(list_data)
+        time.sleep(1)
+    else:
+        if num_registers == 0x01:
+            time.sleep(1)
+            list_data = [0]
+            print(list_data)
+        else:
+            time.sleep(1)
+            list_data = [0,0]
+            print(list_data)
+    return list_data
+  
+def value():
+    # Connect to RTU sensors
+    client = ModbusClient.ModbusSerialClient(
+                                            port= "/dev/ttyS0", 
+                                            framer= ModbusRtuFramer,
+                                            baudrate=9600,
+                                            bytesize=8,
+                                            parity="N",
+                                            stopbits=1,
+                                            errorcheck="crc",
+                                            timeout=3,
+                                            retries=3,
+                                            )
 
+    # Connect to RTU sensors
+    connection = client.connect()
+    print(f"connection: {connection}")
+    
     # Measure CO2 sensor RK300-03
-    CO2 = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1,0)[0]
+    CO2 = read_sensor_rtu(client, register_address_1, num_registers_1, slave_address_1)[0]
     time.sleep(1)
     
     # Measure Atmospheric sensor RK330-01
-    Atmostpheric_data = rika.read_sensor_rtu(register_address_2,num_registers_2,slave_address_2,0)
+    Atmostpheric_data = read_sensor_rtu(client, register_address_2,num_registers_2,slave_address_2)
     Temperature_Air = Atmostpheric_data[0]/10
     Humidity_Air = Atmostpheric_data[1]/10
     time.sleep(1)
     
     # Measure pH sensor RK500-02
-    pH = rika.read_sensor_rtu(register_address_3,num_registers_3,slave_address_3,0)[0] /100
+    pH = read_sensor_rtu(client, register_address_3,num_registers_3,slave_address_3)[0] /100
     time.sleep(1)
+    
+    client.close()
     
     # Measure moisture sensor WD5
     data_wd5 = read_wd5.main_read(1)
@@ -76,23 +94,5 @@ while True:
                 "Temperature_soil": Temp,
             }
     print(message)
-    
-    
-    # Publish data to AWS IoT Broker
-    
-    time_now()
-    
-    
-    # Check request and run control_watering
-    MQTT_publish.publish_data(message)
-    # Auto watering (Demo)
-    if Vol<=60:
-        list=watering.watering(list[0],list[1],list[2])
-    
-    
-    # Wait 5 minute
-    end=time.time()
-    wait=300+start-end
-    if wait > 0 :
-        time.sleep(wait)     
+    return message  
     
