@@ -3,7 +3,7 @@ import time
 import pymodbus.client as ModbusClient
 from pymodbus.transaction import ModbusRtuFramer
 
-# import my code
+# Import my code
 import read_wd5
 
 # Khai bao thong so va connect voi cac sensors
@@ -53,7 +53,7 @@ def value():
                                             parity="N",
                                             stopbits=1,
                                             errorcheck="crc",
-                                            timeout=3,
+                                            timeout=45,
                                             retries=3,
                                             )
 

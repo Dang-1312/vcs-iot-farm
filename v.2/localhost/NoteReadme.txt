@@ -26,7 +26,8 @@ Slave_address	|Device
 -------------------------------------
 0x03		|pH
 
-Payload gửi từ AWS IoT về có dạng [Stage,Vol_1,Vol_2,EC_1,EC_2]
-- Stage: giai đoạn phát triển của cây đang ở giai đoạn mấy
+Payload gửi từ AWS IoT về có dạng {"Status": value,"EC": value,"Vol": value,"Vol_1": value,"Vol_2": value,"EC_1": value,"EC_2": value}
+- Status: trạng thái hiện tại của hệ thống bơm
+- EC và Vol: EC và độ ẩm đất lần đo gần nhất
 - Vol_1 và Vol_2 : Khoảng độ ẩm đất phù hợp với từng giai đoạn phát triển Vol_1 <= Vol <= Vol_2
 - EC_1 và EC_2 : Khoảng EC đất phù hợp với từng giai đoạn phát triển EC_1 <= EC <= EC_2
