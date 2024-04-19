@@ -22,7 +22,7 @@ CLIENT_ID = "RasPi_Up"
 PATH_TO_CERTIFICATE = "-certificate.pem.crt"
 PATH_TO_PRIVATE_KEY = "-private.pem.key"
 PATH_TO_AMAZON_ROOT_CA_1 = ".pem"
-TOPIC = "raspi/publish"
+TOPIC = "django/request"
 
 # Spin up resources
 event_loop_group = io.EventLoopGroup(1)
@@ -43,9 +43,6 @@ mqtt_connection = mqtt_connection_builder.mtls_from_path(
 def received(topic, payload, **kwargs):
     msg = json.loads(payload.decode("utf-8"))
     
-
-
-
 
 # Main loop program
 while True:
