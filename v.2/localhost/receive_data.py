@@ -8,7 +8,7 @@ import json
 import threading
 
 # Import my code
-import control_watering as control
+import control_main as control
 import read_wd5 as wd5
 
 
@@ -18,7 +18,7 @@ received_all_event = threading.Event()
 
 # Define ENDPOINT, CLIENT_ID, PATH_TO_CERTIFICATE, PATH_TO_PRIVATE_KEY, PATH_TO_AMAZON_ROOT_CA_1, MESSAGE, TOPIC, and RANGE
 ENDPOINT = ".amazonaws.com"
-CLIENT_ID = "RasPi_Up"
+CLIENT_ID = "RasPi_Irrigate"
 PATH_TO_CERTIFICATE = "-certificate.pem.crt"
 PATH_TO_PRIVATE_KEY = "-private.pem.key"
 PATH_TO_AMAZON_ROOT_CA_1 = ".pem"
@@ -39,11 +39,34 @@ mqtt_connection = mqtt_connection_builder.mtls_from_path(
             keep_alive_secs=6
             )
 
+# Publish pumps system status
+def publish_irrigate(status):
+    # # Connect to AWS IoT Core
+    # connect_future = mqtt_connection.connect()
+    # # Wait until the MQTT connection is established 
+    # connect_future.result()
+    
+    # # Prepare message
+    message = {"irrigate": status}
+    # Publish status irrigate to AWS IoT Core
+    mqtt_connection.publish(topic="irrigate/publish", payload=json.dumps(message), qos=mqtt.QoS.AT_LEAST_ONCE)
+    
+    # # Disconnect to AWS IoT Core
+    # mqtt_connection.disconnect()
+
 # Update ideal_data and pump system operation
 def received(topic, payload, **kwargs):
+    print("Received message from topic '{}': '{}'".format(topic, payload))
     msg = json.loads(payload.decode("utf-8"))
+    ec_s = msg['EC']
+    mois_s = msg['Mois']
+    mois1 = msg['Mois_1']
+    mois2 = msg['Mois_2']
+    ec1 = msg['EC_1']
+    ec2 = msg['EC_2']
+    status = control.main(ec_s, mois_s, mois1, mois2, ec1, ec2)
+    publish_irrigate(status)
     
-
 # Main loop program
 while True:
     # Connect to AWS IoT Core

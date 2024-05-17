@@ -21,9 +21,9 @@ def product_to_number(product):
 
 def main_read(i):
     if i==1:
-        portName = "/dev/ttyUSB0"
-    elif i==2:
-        portName= "/dev/ttyUSB0"
+        portName = "/dev/ttyUSB0"       # Port WD5 in soil 
+    # elif i==2:
+        # portName= "/dev/ttyUSB0"        # Port WD5 in irrigation tank
     waitTime = 0.5
 
     address = 0

@@ -1,5 +1,8 @@
 import subprocess
 import time
+import pymodbus.client as ModbusClient
+
+import control_extra as extra
 
 def uno220gpio():
     command = "uno220gpio --status"
@@ -34,15 +37,23 @@ def check():
             values = uno220gpio()
     return values
 
-def water_tank(old, v4):
+def water_tank():
     values = check()
-    if values[0]=='1':                        # Buoy 1 reply 1 <=> water's level 2 (mid)
-            return 2
-    elif values[0]=='0':                      # Buoy 1 reply 0 (2 scenarios: full or low)
-        if (old==2 or old==3) and v4==1 :   # The previous water level of the float is 2 or 3, and the electric valve is open to drain water into the tank => (full)
+    if values[0]==0 :                       # Buoy 1 reply 0 <=> water level 1 or 3
+        client=extra.connect_relay()
+        extra.valve_4(client,1)
+        time.sleep(10)                      # Cần kiểm tra chỗ này 10 giây đủ để thay đổi mực nước không
+        extra.valve_4(client,0)
+        client.close()
+        
+        values = check()
+        if values[0]==0:                    # Buoy 1 reply 0 <=> water level 3
             return 3
-        elif (old==2 and v4==0) or old==1:  # The previous water level of the float is 1 or (2 and the electric valve is close)  => (low)
-            return 1
+        elif values[0]==1:                  # Buoy 1 reply 1 <=> water level 2
+            return 2
+        
+    elif values[0]==1:                      # Buoy 1 reply 1 <=> water level 2
+        return 2
         
 def nutrient_tank():
     values = check()

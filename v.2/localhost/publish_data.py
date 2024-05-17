@@ -11,7 +11,7 @@ import read_sensors as measure
 
 # Define ENDPOINT, CLIENT_ID, PATH_TO_CERTIFICATE, PATH_TO_PRIVATE_KEY, PATH_TO_AMAZON_ROOT_CA_1, MESSAGE, TOPIC, and RANGE
 ENDPOINT = ".amazonaws.com"
-CLIENT_ID = "RasPi_Up"
+CLIENT_ID = "RasPi_Sensors"
 PATH_TO_CERTIFICATE = "-certificate.pem.crt"
 PATH_TO_PRIVATE_KEY = "-private.pem.key"
 PATH_TO_AMAZON_ROOT_CA_1 = ".pem"

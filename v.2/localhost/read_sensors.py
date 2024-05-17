@@ -27,18 +27,16 @@ def read_sensor_rtu(client, register_address,num_registers,slave_address):
     # Send request to device and wait return
     response = client.read_holding_registers(register_address,num_registers,slave_address)
     
-    # Check error and 
+    # Check error and correct data
     if not response.isError():
         list_data = response.registers
         print(list_data)
         time.sleep(1)
     else:
         if num_registers == 0x01:
-            time.sleep(1)
             list_data = [0]
             print(list_data)
         else:
-            time.sleep(1)
             list_data = [0,0]
             print(list_data)
     return list_data
