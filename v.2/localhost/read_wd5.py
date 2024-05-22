@@ -23,7 +23,7 @@ def main_read(i):
     if i==1:
         portName = "/dev/ttyUSB0"       # Port WD5 in soil 
     # elif i==2:
-        # portName= "/dev/ttyUSB0"        # Port WD5 in irrigation tank
+        # portName= "/dev/ttyUSB1"        # Port WD5 in irrigation tank
     waitTime = 0.5
 
     address = 0
@@ -81,12 +81,11 @@ def main_read(i):
                 print("version:" + version)
                 print("option :" + option)
                 if response[4:5].decode('Shift_JIS') != str(address):
-                    address = address + 1
+                    length=0
                     continue
                 if sdi_ver != "13":
-                    address = address + 1
+                    length=0
                     continue
-                address_right = address
                 type_product = product_to_number(product)
                 now = now_utc_str()
             else:
@@ -178,8 +177,8 @@ def main_read(i):
                         dt = d.strftime('%Y/%m/%d %H:%M:%S')
                         print(dt)
                         check = 0
-            # else:
-            #     check = 0
+            else:
+                 check = 0
             time.sleep(1)
         except KeyboardInterrupt:
             print("Measurement has been cancelled.")

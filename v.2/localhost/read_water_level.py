@@ -30,7 +30,7 @@ def uno220gpio():
 def check():
     values = uno220gpio()
     
-    for i in range(0,8): 
+    for i in range(0,4): 
         if values[i]=='X':                          # Check GPIO Ports were enabled
             subprocess.run(["lxterminal", "-e", "uno220gpio --export=all"])
             time.sleep(3)

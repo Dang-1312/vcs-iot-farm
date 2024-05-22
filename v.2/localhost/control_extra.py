@@ -5,7 +5,7 @@ from pymodbus.transaction import ModbusRtuFramer
 
 import read_wd5 as wd5
 
-
+# Calculate irriagation water volume and EC
 def calc_ec(ec_s, mois_s, mois1, mois2, ec1, ec2):
     ec_i = (ec1 + ec2) / 2
     mois_i = (mois1 + mois2) / 2
@@ -13,11 +13,13 @@ def calc_ec(ec_s, mois_s, mois1, mois2, ec1, ec2):
     ec_t = (ec_i - ec_s)/vol + ec_s
     return {ec_t, vol}
 
+# Calculate irrigation duration
 def calc_time(vol_need):
     vol_1s = 0.01                               # Giả sử máy bơm tưới bơm ra 0,01lít trong 1 giây
     t = vol_need/(vol_1s/4) 
     return t
 
+# Connect to Relay Ethernet
 def connect_relay():
     client = ModbusClient.ModbusTcpClient(host= "192.168.1.204" , 
                                           port= 12345, 
@@ -32,6 +34,7 @@ def connect_relay():
     connection = client.connect()
     return client
 
+# Control Valve 1
 def valve_1(client, sw):
     if sw==0:
         response = client.write_coil(address=0x00, value=0x00, slave=0x01)
@@ -39,7 +42,8 @@ def valve_1(client, sw):
     elif sw==1:
         response = client.write_coil(address=0x00, value=0xFF, slave=0x01)
         print(response)
-        
+
+# Control Valve 2        
 def valve_2(client, sw):
     if sw==0:
         response = client.write_coil(address=0x01, value=0x00, slave=0x01)
@@ -47,7 +51,8 @@ def valve_2(client, sw):
     elif sw==1:
         response = client.write_coil(address=0x01, value=0xFF, slave=0x01)
         print(response)
-        
+
+# Control Valve 3        
 def valve_3(client, sw):
     if sw==0:
         response = client.write_coil(address=0x06, value=0x00, slave=0x01)
@@ -55,7 +60,8 @@ def valve_3(client, sw):
     elif sw==1:
         response = client.write_coil(address=0x06, value=0xFF, slave=0x01)
         print(response)
-        
+
+# Control Valve 4        
 def valve_4(client, sw):
     if sw==0:
         response = client.write_coil(address=0x05, value=0x00, slave=0x01)
@@ -63,7 +69,8 @@ def valve_4(client, sw):
     elif sw==1:
         response = client.write_coil(address=0x05, value=0xFF, slave=0x01)
         print(response)
-        
+
+# Control Pump 1        
 def pump_1(client, sw):
     if sw==0:
         response = client.write_coil(address=0x02, value=0x00, slave=0x01)
@@ -71,7 +78,8 @@ def pump_1(client, sw):
     elif sw==1:
         response = client.write_coil(address=0x02, value=0xFF, slave=0x01)
         print(response)
-        
+
+# Control Pump 2        
 def pump_2(client, sw):
     if sw==0:
         response = client.write_coil(address=0x03, value=0x00, slave=0x01)
@@ -79,7 +87,8 @@ def pump_2(client, sw):
     elif sw==1:
         response = client.write_coil(address=0x03, value=0xFF, slave=0x01)
         print(response)
-        
+      
+# Control Pump 3  
 def pump_3(client, sw):
     if sw==0:
         response = client.write_coil(address=0x04, value=0x00, slave=0x01)
@@ -88,6 +97,7 @@ def pump_3(client, sw):
         response = client.write_coil(address=0x04, value=0xFF, slave=0x01)
         print(response)
         
+# Control Pump 4
 def pump_4(client, sw):
     if sw==0:
         response = client.write_coil(address=0x07, value=0x00, slave=0x01)

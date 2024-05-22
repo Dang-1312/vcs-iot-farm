@@ -22,7 +22,7 @@ CLIENT_ID = "RasPi_Irrigate"
 PATH_TO_CERTIFICATE = "-certificate.pem.crt"
 PATH_TO_PRIVATE_KEY = "-private.pem.key"
 PATH_TO_AMAZON_ROOT_CA_1 = ".pem"
-TOPIC = "django/request"
+TOPIC = "server/request"
 
 # Spin up resources
 event_loop_group = io.EventLoopGroup(1)
