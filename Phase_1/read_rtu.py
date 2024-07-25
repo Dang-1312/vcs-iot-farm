@@ -10,6 +10,7 @@ import control_extra as extra
         
 # Hàm khởi động lại các cảm biến RS485 nếu có lỗi cảm biến       
 def reset_sensor():
+    logging.info("Beginning reset sensors")
     client = extra.connect_relay()
     time.sleep(3)
     extra.reset_sensor(client, 1)
@@ -35,6 +36,8 @@ def read_sensor_rtu(register_address,num_registers,slave_address):
                                             retry_on_empty=True,
                                             )
 
+    list_data = None
+    
     # Connect to Module RS485 to ETH (B)
     connection = client.connect()
     print(f"connection {slave_address}: {connection}")
@@ -47,12 +50,12 @@ def read_sensor_rtu(register_address,num_registers,slave_address):
         list_data = response.registers
         print(list_data)
         time.sleep(1)
-        
+        client.close()
+        return list_data
     else:
         logging.info("Measurement ERROR from RS485 sensor.")
         client.close()
         reset_sensor()
         read_sensor_rtu(register_address,num_registers,slave_address)
             
-    client.close()
-    return list_data
+    

@@ -76,20 +76,24 @@ try:
         
 
         # Measure CO2 sensor RK300-03
+        logging.info("Start measure CO2 Sensor")
         CO2 = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)[0]
         time.sleep(1)
         
         # Measure Atmospheric sensor RK330-01
+        logging.info("Start measure Atmospheric Sensor")
         Atmostpheric_data = rika.read_sensor_rtu(register_address_2,num_registers_2,slave_address_2)
         Temperature_Air = Atmostpheric_data[0]/10
         Humidity_Air = Atmostpheric_data[1]/10
         time.sleep(1)
         
         # Measure pH sensor RK500-02
+        logging.info("Start measure pH Sensor")
         pH = rika.read_sensor_rtu(register_address_3,num_registers_3,slave_address_3)[0] /100
         time.sleep(1)
         
         # Measure moisture sensor WD5
+        logging.info("Start measure WD5 Sensor")
         data_wd5 = read_wd5.main_read(1)
         Vol = float(data_wd5[0])
         EC = float(data_wd5[1])
