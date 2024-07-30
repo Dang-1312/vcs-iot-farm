@@ -6,19 +6,6 @@ from pymodbus import pymodbus_apply_logging_config
 
 import logging
 
-import control_extra as extra
-        
-# Hàm khởi động lại các cảm biến RS485 nếu có lỗi cảm biến       
-def reset_sensor():
-    logging.info("Beginning reset sensors")
-    client = extra.connect_relay()
-    time.sleep(3)
-    extra.reset_sensor(client, 1)
-    time.sleep(60)
-    extra.reset_sensor(client, 0)
-    client.close()
-    logging.info("Done reset sensors")
-    time.sleep(180)
     
 def read_sensor_rtu(register_address,num_registers,slave_address):
     logging.basicConfig(filename='phase_1.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -51,11 +38,9 @@ def read_sensor_rtu(register_address,num_registers,slave_address):
         print(list_data)
         time.sleep(1)
         client.close()
-        return list_data
+        return list_data 
     else:
         logging.info("Measurement ERROR from RS485 sensor.")
         client.close()
-        reset_sensor()
-        read_sensor_rtu(register_address,num_registers,slave_address)
-            
+        return response             
     

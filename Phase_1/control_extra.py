@@ -5,6 +5,17 @@ from pymodbus.transaction import ModbusRtuFramer
 
 import read_wd5 as wd5
 
+
+# Function reset source for RS485 sensors       
+def reset_sensor():
+    client = extra.connect_relay()
+    time.sleep(3)
+    extra.reset_sensor(client, 1)
+    time.sleep(60)
+    extra.reset_sensor(client, 0)
+    client.close()
+    time.sleep(180)
+    
 # Calculate irriagation water volume and EC
 def calc_ec(ec_s, mois_s, mois1, mois2, ec1, ec2):
     ec_i = (ec1 + ec2) / 2
