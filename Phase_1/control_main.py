@@ -32,21 +32,24 @@ def irrigation_full(client):
   while(level.irrigation_tank() != 3):
     extra.valve_1(client, 1)
     extra.pump_1(client, 1)
-    time.sleep(5)
+    time.sleep(10)
   extra.valve_1(client, 0)
   extra.pump_1(client, 0)
 
 # Function control irrigate system
-def main():
+def main(vol):
   client = extra.connect_relay()
+  
+  # Check level water in irrigation tank
   lv_irrigate = level.irrigation_tank()
   if not lv_irrigate == 3:
     lv_water = level.water_tank()
+    # Check level water in water tank
     if not lv_water == 3:
       water_full(client)
     irrigation_full(client)
 
-  vol = float(wd5.main_read(1)[0])
+  # Loop irrigate plants and check soil moisture
   while (vol<60):
       irrigate_plants(client,vol)
       time.sleep(20)

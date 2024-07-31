@@ -30,8 +30,10 @@ Slave_address	|Device
 -------------------------------------
 0x03		|pH
 
+################## Một số thông số khác ######################
 Thể tích đất trong thùng xốp trồng cây ~90lít
+Máy bơm tưới bơm ra 0,55 lít/phút/béc
+Tốc độ xả nước vào thùng nước 15 lít/phút
 
 ############ Một số thông số cần kiểm tra lại ###############
 Thời gian để bơm đầy thùng trộn 50 lít (từ đáy thùng (mức 1) đến đầy thùng (mức 3))
-Đo lượng nước máy bơm tưới bơm ra các béc trong một khoảng thời gian

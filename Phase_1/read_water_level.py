@@ -42,7 +42,7 @@ def water_tank():
     if values[0]==0 :                       # Buoy 1 reply 0 <=> water level 1 or 3
         client=extra.connect_relay()
         extra.valve_4(client,1)
-        time.sleep(10)                      # Cần kiểm tra chỗ này 10 giây đủ để thay đổi mực nước không
+        time.sleep(35)                      # The time to pump water from level 1 to level 2 is 35 seconds
         extra.valve_4(client,0)
         client.close()
         

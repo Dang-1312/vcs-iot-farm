@@ -32,7 +32,7 @@ def measure_temp():
     return temp
 
     
-# Ham check xem đến giờ tưới cây chưa (8:00 AM)
+# Function to check if it's time to water the plants (8:00 AM)
 def check_on():
     now=datetime.datetime.now()
     h=now.hour
@@ -42,7 +42,7 @@ def check_on():
     else:
         return 0    
 
-# Khai bao thong so va connect voi cac sensors
+# Declare parameters and connect to the sensors
 # CO2 sensor RK300-03
 register_address_1 = 0x00
 num_registers_1 = 0x01
@@ -69,26 +69,42 @@ try:
         start=time.time()
         
         
-        # Do va ghi lai nhiet do CPU vao file .log
+        # Measure and log CPU temperature to a .log file
         cpu = measure_temp()
         log_entry = f'CPU Temperature: {cpu} °C'
         logging.info(log_entry)
         
         # Measure CO2 sensor RK300-03
         logging.info("Start measure CO2 Sensor")
-        CO2 = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)[0]
+        data = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)
+        if data[0] == "ERROR":
+            extra.reset_sensor()
+            CO2 = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)[0]
+        else:
+            CO2 = data[0]
         time.sleep(1)
         
         # Measure Atmospheric sensor RK330-01
         logging.info("Start measure Atmospheric Sensor")
         Atmostpheric_data = rika.read_sensor_rtu(register_address_2,num_registers_2,slave_address_2)
-        Temperature_Air = Atmostpheric_data[0]/10
-        Humidity_Air = Atmostpheric_data[1]/10
+        if Atmostpheric_data[0] == "ERROR":
+            extra.reset_sensor()  
+            Atmostpheric_data = rika.read_sensor_rtu(register_address_2,num_registers_2,slave_address_2)  
+            Temperature_Air = Atmostpheric_data[0]/10
+            Humidity_Air = Atmostpheric_data[1]/10    
+        else:
+            Temperature_Air = Atmostpheric_data[0]/10
+            Humidity_Air = Atmostpheric_data[1]/10
         time.sleep(1)
         
         # Measure pH sensor RK500-02
         logging.info("Start measure pH Sensor")
-        pH = rika.read_sensor_rtu(register_address_3,num_registers_3,slave_address_3)[0] /100
+        data = rika.read_sensor_rtu(register_address_3,num_registers_3,slave_address_3)
+        if data[0] == "ERROR":
+            extra.reset_sensor()
+            pH = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)[0]/100
+        else:
+            pH = data[0]/100
         time.sleep(1)
         
         # Measure moisture sensor WD5
@@ -111,19 +127,17 @@ try:
         print(message)
         logging.info("Dictionary: %s", json.dumps(message))
         
-        time_now()
-        
-        # Check request and run control_watering
         MQTT_publish.publish_data(message)
-        logging.info("Success publish")
+        logging.info("Success publish")      
+          
+        time_now()
         
         # Auto watering (Demo)
         if check_on() == 1:
             if Vol<=55:
-                list=watering.main()
+                list=watering.main(Vol)
                 logging.info("Success irregate plants")
-        
-        
+         
         # Wait 5 minute
         end=time.time()
         wait=300+start-end
