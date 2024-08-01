@@ -54,5 +54,5 @@ def read_sensor_rtu(register_address,num_registers,slave_address):
     else:
         logging.info("Measurement ERROR from RS485 sensor.")
         client.close()
-        return {"ERROR"}         
+        return ["ERROR"]         
     
