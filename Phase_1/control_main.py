@@ -10,9 +10,9 @@ import control_extra as extra
 
 # Function controll fill full water tank  
 def water_full(client):
-  while(level.water_tank() == 2):
+  while(level.water_tank() != 3):
     extra.valve_4(client, 1)
-    time.sleep(5)
+    time.sleep(35)
   extra.valve_4(client, 0)
    
 # Function control irrigate plants  
@@ -29,10 +29,14 @@ def irrigate_plants(client,vol):
 
 # Function to fill irrigation tank
 def irrigation_full(client):
-  while(level.irrigation_tank() != 3):
+  timeout = 0
+  T1 = time.time()
+  while(level.irrigation_tank() != 3 or timeout == 300):
     extra.valve_1(client, 1)
     extra.pump_1(client, 1)
     time.sleep(10)
+    T2 = time.time()
+    timeout == T2 - T1
   extra.valve_1(client, 0)
   extra.pump_1(client, 0)
 
@@ -53,4 +57,4 @@ def main(vol):
   while (vol<60):
       irrigate_plants(client,vol)
       time.sleep(20)
-      vol = wd5.main_read(1)[0]
+      vol = float(wd5.main_read(1)[0])

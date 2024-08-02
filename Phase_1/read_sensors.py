@@ -37,7 +37,7 @@ def check_on():
     now=datetime.datetime.now()
     h=now.hour
     m=now.minute
-    if (h==8 and 0<=m<=5):
+    if (h==8 and 30<=m<=35):
         return 1
     else:
         return 0    
