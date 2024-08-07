@@ -10,7 +10,7 @@ import control_extra as extra
 
 # Function controll fill full water tank  
 def water_full(client):
-  while(level.water_tank() != 3):
+  while(level.water_tank(2) != 3):
     extra.valve_4(client, 1)
     time.sleep(35)
   extra.valve_4(client, 0)
@@ -47,7 +47,7 @@ def main(vol):
   # Check level water in irrigation tank
   lv_irrigate = level.irrigation_tank()
   if not lv_irrigate == 3:
-    lv_water = level.water_tank()
+    lv_water = level.water_tank(1)
     # Check level water in water tank
     if not lv_water == 3:
       water_full(client)

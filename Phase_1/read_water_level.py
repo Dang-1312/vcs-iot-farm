@@ -37,7 +37,7 @@ def check():
             values = uno220gpio()
     return values
 
-def water_tank():
+def water_tank(i):
     values = check()
     # print("Value =",values[0])
     if values[0] == '1' :                      # Buoy 1 reply 1 <=> water level 2
@@ -45,17 +45,20 @@ def water_tank():
         
     elif values[0] == '0' :                       # Buoy 1 reply 0 <=> water level 1 or 3
         # print("Bắt đầu kiểm tra")
-        client=extra.connect_relay()
-        extra.valve_4(client,1)
-        time.sleep(35)                      # The time to pump water from level 1 to level 2 is 35 seconds
-        extra.valve_4(client,0)
-        client.close()
-        
-        values = check()
-        if values[0] == '0':                    # Buoy 1 reply 0 <=> water level 3
+        if i == 1 :
+            client=extra.connect_relay()
+            extra.valve_4(client,1)
+            time.sleep(35)                      # The time to pump water from level 1 to level 2 is 35 seconds
+            extra.valve_4(client,0)
+            client.close()
+            
+            values = check()
+            if values[0] == '0':                    # Buoy 1 reply 0 <=> water level 3
+                return 3
+            elif values[0] == '1':                  # Buoy 1 reply 1 <=> water level 2
+                return 2
+        elif i == 2 :
             return 3
-        elif values[0] == '1':                  # Buoy 1 reply 1 <=> water level 2
-            return 2
         
 def nutrient_tank():
     values = check()
