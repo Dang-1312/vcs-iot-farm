@@ -18,11 +18,15 @@ def water_full(client):
 # Function control irrigate plants  
 def irrigate_plants(client,vol):
   # Calculate irrigation duration
-  t = extra.calc_time(60-vol)
+  vol_need = 60 - vol
+  if vol_need < 24:
+    t = extra.calc_time(vol_need)
+  else:
+    t = 580
   # On Valve 3 and Pump 2 
   extra.valve_3(client, 1)
   extra.pump_2(client, 1)
-  time.sleep(t+10)
+  time.sleep(t+3)
   # Off Valve 3 and Pump 2 
   extra.pump_2(client, 0)
   extra.valve_3(client, 0)

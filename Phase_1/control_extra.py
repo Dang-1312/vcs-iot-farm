@@ -15,7 +15,7 @@ def calc_ec(ec_s, mois_s, mois1, mois2, ec1, ec2):
 
 # Calculate irrigation duration
 def calc_time(vol_need):
-    vol_1s = 0.0275                               # The irrigation pump outputs 0.0275 liters of water per second through 3 nozzles
+    vol_1s = 0.041                               # The irrigation pump outputs 0.041 liters of water per second through 3 nozzles
     t = vol_need/vol_1s
     return t
 
@@ -95,16 +95,7 @@ def pump_3(client, sw):
         print(response)
     elif sw==1:
         response = client.write_coil(address=0x04, value=0xFF, slave=0x01)
-        print(response)
-
-# Control power for RS485 sensor 
-# def reset_sensor(client, sw):
-#     if sw==0:
-#         response = client.write_coil(address=0x07, value=0x00, slave=0x01)
-#         print(response)
-#     elif sw==1:
-#         response = client.write_coil(address=0x07, value=0xFF, slave=0x01)
-#         print(response)  
+        print(response)  
             
 # Function reset power for RS485 sensors       
 def reset_sensor():

@@ -11,7 +11,7 @@ CH2	|0x01		| Van 2 (thùng dinh dưỡng -> thùng tưới)
 ------------------------------------------------
 CH3	|0x02		| Máy bơm hóa chất (Pump_1)
 ------------------------------------------------
-CH4	|0x03		| Máy bơm tưới và Máy bơm chìm (trộn trong thùng tưới) (Pump_2)
+CH4	|0x03		| Máy bơm tưới và Máy bơm trộn (Pump_2 + Pump_4)
 ------------------------------------------------
 CH5	|0x04		| Máy bơm phun sương (Pump_3)
 ------------------------------------------------
@@ -34,6 +34,7 @@ Slave_address	|Device
 Thể tích đất trong thùng xốp trồng cây ~90lít
 Máy bơm tưới bơm ra 0,55 lít/phút/béc
 Tốc độ xả nước vào thùng nước 15 lít/phút
+Thời gian để tưới hết nước trong thùng tưới ra sấp sỉ 592 giây
 
 ############ Một số thông số cần kiểm tra lại ###############
 Thời gian để bơm đầy thùng trộn 50 lít (từ đáy thùng (mức 1) đến đầy thùng (mức 3))

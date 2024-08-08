@@ -37,7 +37,7 @@ def check_on():
     now=datetime.datetime.now()
     h=now.hour
     m=now.minute
-    if (h==8 and 30<=m<=35):
+    if (h==9 and 10<=m<=15):
         return 1
     else:
         return 0    
@@ -59,7 +59,7 @@ num_registers_3 = 0x01
 slave_address_3 = 0x03
 
 # Create file log
-logging.basicConfig(filename='phase_1.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='/home/pi/Downloads/Phase_1/phase_1.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 try:
     # Main loop program
@@ -147,7 +147,7 @@ try:
             time.sleep(3)
             
 except Exception as error: 
-    # handle the exception              
+    # Handle the exception              
     print("An error occurred:", type(error).__name__, "–", error)              
     logging.error(f"An error occurred: {type(error).__name__} - {error}")
     
