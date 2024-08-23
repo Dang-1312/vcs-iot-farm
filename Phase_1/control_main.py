@@ -35,10 +35,10 @@ def irrigate_plants(client,vol):
 def irrigation_full(client):
   timeout = 0
   T1 = time.time()
-  while(level.irrigation_tank() != 3 or timeout == 300):
+  while((level.irrigation_tank() != 3) and (timeout < 300)):
     extra.valve_1(client, 1)
     extra.pump_1(client, 1)
-    time.sleep(10)
+    time.sleep(5)
     T2 = time.time()
     timeout == T2 - T1
   extra.valve_1(client, 0)

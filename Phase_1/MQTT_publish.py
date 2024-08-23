@@ -51,8 +51,8 @@ def publish_data(data):
 
     except (KeyboardInterrupt):
         print("Measurement has been cancelled.")
-        return
+        return "Cancel"
 
     except:
         print ("There was an error while publishing the data.")
-        return
+        return "Error"

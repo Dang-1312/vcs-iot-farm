@@ -134,7 +134,7 @@ try:
         
         # Auto watering (Demo)
         if check_on() == 1:
-            if Vol<=55:
+            if Vol<=60:
                 list=watering.main(Vol)
                 logging.info("Success irregate plants")
          
