@@ -103,9 +103,9 @@ def reset_sensor():
     time.sleep(3)
     response = client.write_coil(address=0x07, value=0xFF, slave=0x01)  # Cut off power to the sensors
     print(response)
-    time.sleep(60)
+    time.sleep(90)
     response = client.write_coil(address=0x07, value=0x00, slave=0x01) # Power on the sensors
     print(response)
     client.close()
-    time.sleep(180)
+    time.sleep(120)
     

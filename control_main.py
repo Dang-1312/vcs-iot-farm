@@ -18,7 +18,7 @@ def water_full(client):
 # Function control irrigate plants  
 def irrigate_plants(client,vol):
   # Calculate irrigation duration
-  vol_need = 60 - vol
+  vol_need = 65 - vol
   if vol_need < 24:
     t = extra.calc_time(vol_need)
   else:
@@ -56,9 +56,5 @@ def main(vol):
     if not lv_water == 3:
       water_full(client)
     irrigation_full(client)
-
-  # Loop irrigate plants and check soil moisture
-  while (vol<60):
-      irrigate_plants(client,vol)
-      time.sleep(20)
-      vol = float(wd5.main_read(1)[0])
+  # Irrigate plants
+  irrigate_plants(client,vol)
