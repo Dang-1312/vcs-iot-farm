@@ -13,7 +13,6 @@ from pymodbus import pymodbus_apply_logging_config
 # import my code
 import read_wd5
 import read_rtu as rika
-#import aws_iot_trans as aws
 import control_main as watering
 import MQTT_publish
 import control_extra as extra
@@ -37,7 +36,7 @@ def check_on():
     now=datetime.datetime.now()
     h=now.hour
     m=now.minute
-    if (h==9 and 10<=m<=15):
+    if (h==9 and 10<=m<=30):
         return 1
     else:
         return 0    
@@ -78,6 +77,8 @@ try:
         logging.info("Start measure CO2 Sensor")
         data = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)
         if data[0] == "ERROR":
+            logging.warning("CO2 failed")
+            logging.info("Resetting sensors's power")
             extra.reset_sensor()
             CO2 = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)[0]
         else:
@@ -88,6 +89,8 @@ try:
         logging.info("Start measure Atmospheric Sensor")
         Atmostpheric_data = rika.read_sensor_rtu(register_address_2,num_registers_2,slave_address_2)
         if Atmostpheric_data[0] == "ERROR":
+            logging.warning("Atmostpheric failed")
+            logging.info("Resetting sensors's power")
             extra.reset_sensor()  
             Atmostpheric_data = rika.read_sensor_rtu(register_address_2,num_registers_2,slave_address_2)  
             Temperature_Air = Atmostpheric_data[0]/10
@@ -101,6 +104,8 @@ try:
         logging.info("Start measure pH Sensor")
         data = rika.read_sensor_rtu(register_address_3,num_registers_3,slave_address_3)
         if data[0] == "ERROR":
+            logging.warning("pH failed")
+            logging.info("Resetting sensors's power")
             extra.reset_sensor()
             pH = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)[0]/100
         else:
@@ -134,7 +139,7 @@ try:
         
         # Auto watering (Demo)
         if check_on() == 1:
-            if Vol<=60:
+            if Vol<=65:
                 list=watering.main(Vol)
                 logging.info("Success irregate plants")
          
