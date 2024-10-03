@@ -2,13 +2,13 @@ import time
 
 import pymodbus.client as ModbusClient
 from pymodbus.transaction import ModbusRtuFramer
-from pymodbus import pymodbus_apply_logging_config
+# from pymodbus import pymodbus_apply_logging_config
 
 import logging
 
     
 def read_sensor_rtu(register_address,num_registers,slave_address):
-    logging.basicConfig(filename='phase_1.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+    # logging.basicConfig(filename='phase_1.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
     # pymodbus_apply_logging_config("DEBUG")
     client = ModbusClient.ModbusSerialClient(
                                             port= "/dev/ttyS0", 
