@@ -1,4 +1,5 @@
-import subprocess
+# import subprocess
+import os
 import time
 import pymodbus.client as ModbusClient
 
@@ -7,12 +8,14 @@ import control_extra as extra
 def uno220gpio():
     command = "uno220gpio --status"
     
-    # Open terminal on RasPi and retrieve the printed data
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True) 
-    output, error = process.communicate()
+    # Open the RasPi terminal, run the uno220 command and retrieve the printed GPIO status data
+    # process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True) 
+    # output, error = process.communicate()
+    output = os.popen(command).read()
     
     if process.returncode == 0:
-        output_lines = output.decode().split('\n')  # Convert data to list lines
+        # output_lines = output.decode().split('\n')  # Convert data to list lines
+        output_lines = output.split('\n')
         
         # Find the line containing "value"
         value_index = None
@@ -22,7 +25,7 @@ def uno220gpio():
                 break
         
         if value_index is not None:
-            value_line = output_lines[value_index]  # Retrieve the line containing "value"
+            value_line = output_lines[value_index]  # Get the line containing the word "value"
             value_columns = value_line.split()      # Split it into columns
             values = value_columns[2:6]             # Retrieve the value from the 'value' column
     return values
@@ -32,7 +35,8 @@ def check():
     
     for i in range(0,4): 
         if values[i]=='X':                          # Check GPIO Ports were enabled
-            subprocess.run(["lxterminal", "-e", "uno220gpio --export=all"])
+            # subprocess.run(["lxterminal", "-e", "uno220gpio --export=all"])
+            os.system("uno220gpio --export=all")
             time.sleep(3)
             values = uno220gpio()
     return values
