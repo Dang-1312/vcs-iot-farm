@@ -34,25 +34,36 @@ topic = "channels/" + channel_ID + "/publish"
 def publish_data(data):
             
     # Creat data
+    mois_soil = data["Moisture_soil"]
+    temp_soil = data["Temperature_soil"]
+    ec = data["EC"]
+    nito = data["Soil_nitrogen"]
+    photpho = data["Soil_phosphorus"]
+    kali = data["Soil_potassium"]
+    pH = data["pH"]
+    co2 = data["CO2"]
     temp_air = data["Temp_air"]
     hum_air = data["Hum_air"]
-    co2 = data["CO2"]
-    pH = data["pH"]
-    mois_soil = data["Moisture_soil"]
-    ec = data["EC"]
-    temp_soil = data["Temperature_soil"]
         
-    tPayload = "field1=" + str(temp_air) + "&field2=" + str(hum_air) + "&field3=" + str(co2) + "&field4=" + str(pH) + "&field5=" + str(mois_soil) + "&field6=" + str(ec) + "&field7=" + str(temp_soil)
+    tPayload = "field1=" + str(mois_soil) + "&field2=" + str(ec) + "&field3=" + str(temp_soil) + "&field4=" + str(nito) + "&field5=" + str(pH) + "&field6=" + str(co2) + "&field7=" + str(temp_air) + "&field8=" + str(hum_air)
+    
     print(tPayload)
     
     try:
         logging.info("Publishing")
         publish.single(topic, payload=tPayload, hostname=mqtt_host, transport=tTransport, port=tPort, client_id=mqtt_client_ID, auth={'username':mqtt_username,'password':mqtt_password})
-
+        time.sleep(5)
+        tPayload = "&field4=" + str(photpho)
+        publish.single(topic, payload=tPayload, hostname=mqtt_host, transport=tTransport, port=tPort, client_id=mqtt_client_ID, auth={'username':mqtt_username,'password':mqtt_password})
+        time.sleep(5)
+        tPayload = "&field4=" + str(kali)
+        publish.single(topic, payload=tPayload, hostname=mqtt_host, transport=tTransport, port=tPort, client_id=mqtt_client_ID, auth={'username':mqtt_username,'password':mqtt_password})
+        return "Success"
+    
     except (KeyboardInterrupt):
         print("Measurement has been cancelled.")
         return "Cancel"
 
-    except:
+    except Exception as error: 
         print ("There was an error while publishing the data.")
-        return "Error"
+        return {type(error).__name__} - {error}
