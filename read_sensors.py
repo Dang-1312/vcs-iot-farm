@@ -11,8 +11,8 @@ from pymodbus.transaction import ModbusRtuFramer
 from pymodbus import pymodbus_apply_logging_config
 
 # import my code
-import read_wd5
-import read_rtu as rika
+# import read_wd5
+import read_rtu as rs485
 import control_main as watering
 import MQTT_publish
 import control_extra as extra
@@ -30,122 +30,140 @@ def measure_temp():
     temp = temp_str.split('=')[1].split("'")[0]
     return temp
 
-    
-# Function to check if it's time to water the plants (8:00 AM)
-def check_on():
-    now=datetime.datetime.now()
-    h=now.hour
-    m=now.minute
-    if (h==9 and 10<=m<=30):
-        return 1
-    else:
-        return 0    
-
-# Declare parameters and connect to the sensors
-# CO2 sensor RK300-03
-register_address_1 = 0x00
-num_registers_1 = 0x01
-slave_address_1 = 0x01
-
-# Atmospheric sensor RK330-01
-register_address_2 = 0x00
-num_registers_2 = 0x02
-slave_address_2 = 0x02
-
-# pH sensor RK500-02
-register_address_3 = 0x00
-num_registers_3 = 0x01
-slave_address_3 = 0x03
 
 # Create file log
-logging.basicConfig(filename='/home/pi/Downloads/Phase_1/phase_1.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+# pymodbus_apply_logging_config("DEBUG")
+logging.basicConfig(filename='/home/pi/Downloads/Phase_2/phase_2.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 try:
+    status = "off"
     # Main loop program
     while True:
         # Start time
         time_now()
         start=time.time()
         
-        
         # Measure and log CPU temperature to a .log file
         cpu = measure_temp()
         log_entry = f'CPU Temperature: {cpu} °C'
         logging.info(log_entry)
         
+        # Measure enviromental parameters
+        
+        # Measure Soil 7in1 sensor
+        # Measure Soil Moisture & Temperature
+        logging.info("Start measure Soil Moisture & Temperature")
+        data = rs485.read_sensor_rtu(register_address=0x12,num_registers=0x02,slave_address=0x01)
+        if data[0] == "ERROR":
+            logging.warning("Soil moisture & temperature failed")
+            logging.info("Resetting sensors's power")
+            extra.reset_sensor()
+            data = rs485.read_sensor_rtu(register_address=0x12,num_registers=0x02,slave_address=0x01)  
+        mois_soil = data[0]/10
+        temp_soil = data[1]/10
+        time.sleep(1)
+        
+        # Measure Soil EC
+        logging.info("Start measure Soil electrical conductivity value")
+        data = rs485.read_sensor_rtu(register_address=0x15,num_registers=0x01,slave_address=0x01)
+        if data[0] == "ERROR":
+            logging.warning("EC failed")
+            logging.info("Resetting sensors's power")
+            extra.reset_sensor()
+            data = rs485.read_sensor_rtu(register_address=0x15,num_registers=0x01,slave_address=0x01)
+        ec = data[0]
+        time.sleep(1)
+        
+        # Measure Soil NPK
+        logging.info("Start measure Soil NPK")
+        data = rs485.read_sensor_rtu(register_address=0x1E,num_registers=0x03,slave_address=0x01)
+        if data[0] == "ERROR":
+            logging.warning("NPK failed")
+            logging.info("Resetting sensors's power")
+            extra.reset_sensor()
+            data = rs485.read_sensor_rtu(register_address=0x1E,num_registers=0x03,slave_address=0x01)
+        N = data[0]
+        P = data[1]
+        K = data[2]
+        time.sleep(1)
+        
+        # Measure Soil pH
+        logging.info("Start measure Soil pH")
+        data = rs485.read_sensor_rtu(register_address=0x06,num_registers=0x01,slave_address=0x01)
+        if data[0] == "ERROR":
+            logging.warning("EC failed")
+            logging.info("Resetting sensors's power")
+            extra.reset_sensor()
+            data = rs485.read_sensor_rtu(register_address=0x06,num_registers=0x01,slave_address=0x01)
+        pH = data[0]/100
+        time.sleep(1)
+        
+        # Measure Rika's sensors
         # Measure CO2 sensor RK300-03
         logging.info("Start measure CO2 Sensor")
-        data = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)
+        data = rs485.read_sensor_rtu(register_address=0x00,num_registers=0x01,slave_address=0x02)
         if data[0] == "ERROR":
             logging.warning("CO2 failed")
             logging.info("Resetting sensors's power")
             extra.reset_sensor()
-            CO2 = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)[0]
-        else:
-            CO2 = data[0]
+            data = rs485.read_sensor_rtu(register_address=0x00,num_registers=0x01,slave_address=0x02)
+        CO2 = data[0]
         time.sleep(1)
         
         # Measure Atmospheric sensor RK330-01
         logging.info("Start measure Atmospheric Sensor")
-        Atmostpheric_data = rika.read_sensor_rtu(register_address_2,num_registers_2,slave_address_2)
-        if Atmostpheric_data[0] == "ERROR":
+        data = rs485.read_sensor_rtu(register_address=0x00,num_registers=0x02,slave_address=0x03)
+        if data[0] == "ERROR":
             logging.warning("Atmostpheric failed")
             logging.info("Resetting sensors's power")
             extra.reset_sensor()  
-            Atmostpheric_data = rika.read_sensor_rtu(register_address_2,num_registers_2,slave_address_2)  
-            Temperature_Air = Atmostpheric_data[0]/10
-            Humidity_Air = Atmostpheric_data[1]/10    
-        else:
-            Temperature_Air = Atmostpheric_data[0]/10
-            Humidity_Air = Atmostpheric_data[1]/10
+            data = rs485.read_sensor_rtu(register_address=0x00,num_registers=0x02,slave_address=0x03)  
+        Temperature_Air = data[0]/10
+        Humidity_Air = data[1]/10
         time.sleep(1)
-        
-        # Measure pH sensor RK500-02
-        logging.info("Start measure pH Sensor")
-        data = rika.read_sensor_rtu(register_address_3,num_registers_3,slave_address_3)
-        if data[0] == "ERROR":
-            logging.warning("pH failed")
-            logging.info("Resetting sensors's power")
-            extra.reset_sensor()
-            pH = rika.read_sensor_rtu(register_address_1,num_registers_1,slave_address_1)[0]/100
-        else:
-            pH = data[0]/100
-        time.sleep(1)
-        
-        # Measure moisture sensor WD5
-        logging.info("Start measure WD5 Sensor")
-        data_wd5 = read_wd5.main_read(1)
-        Vol = float(data_wd5[0])
-        EC = float(data_wd5[1])
-        Temp = float(data_wd5[2])
-        
+         
         # Build message for publish to cloud
         message = {
-                    "Temp_air": Temperature_Air,
-                    "Hum_air": Humidity_Air,
+                    "Moisture_soil": mois_soil,
+                    "Temperature_soil": temp_soil,
+                    "EC": ec,
+                    "Soil_nitrogen" : N,
+                    "Soil_phosphorus" : P,
+                    "Soil_potassium" : K,
+                    "pH" : pH,
                     "CO2": CO2,
-                    "pH": pH,
-                    "Moisture_soil": Vol,
-                    "EC": EC,
-                    "Temperature_soil": Temp,
+                    "Temp_air": Temperature_Air,
+                    "Hum_air": Humidity_Air,                   
                 }
         print(message)
         logging.info("Dictionary: %s", json.dumps(message))
         
-        MQTT_publish.publish_data(message)
-        logging.info("Success publish")      
+        mqtt_status = MQTT_publish.publish_data(message)
+        logging.info(f"MQTT status: {mqtt_status}")      
           
         time_now()
         
         # Auto watering (Demo)
-        if check_on() == 1:
-            if Vol<=65:
-                list=watering.main(Vol)
-                logging.info("Success irregate plants")
+        now=datetime.datetime.now()
+        h=now.hour
+        m=now.minute
+        if (h==9 and 15<=m<=45) and (mois_soil<=60):
+            watering.main(mois_soil)
+            logging.info("Success irregate plants")
+            
+        if (11<=h<14) and (Temperature_Air>=33 or Humidity_Air<=55) and status == "off":
+            status = watering.air(status, 1)
+            logging.info("Misting in progress")
+        elif status == "on" and (Temperature_Air>=33 or Humidity_Air<=55):
+            status = watering.air(status, 1)
+            logging.info("Misting in progress")
+        elif status == "on":
+            status = watering.air(status, 2)
+            logging.info("Misting completed")
          
-        # Wait 5 minute
+        # Wait 10 minute
         end=time.time()
-        wait=300+start-end
+        wait=600+start-end
         if wait > 0 :
             time.sleep(wait)
         else:

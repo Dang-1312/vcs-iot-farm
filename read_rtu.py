@@ -25,7 +25,7 @@ def read_sensor_rtu(register_address,num_registers,slave_address):
 
     list_data = None
     
-    # Connect to Module RS485 to ETH (B)
+    # Connect to RS485 device
     connection = client.connect()
     print(f"connection {slave_address}: {connection}")
 
