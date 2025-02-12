@@ -3,7 +3,7 @@ import random
 import pymodbus.client as ModbusClient
 from pymodbus.transaction import ModbusRtuFramer
 
-import read_wd5 as wd5
+# import read_wd5 as wd5
     
 # Calculate irriagation water volume and EC
 def calc_ec(ec_s, mois_s, mois1, mois2, ec1, ec2):
