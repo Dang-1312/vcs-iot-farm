@@ -1,7 +1,7 @@
 # vcs-iot-farm
 ## Bảng channel relay và địa chỉ tương ứng với các thiết bị:
 |Channel	|Relay address	|Device|
-|:------|:-------------:|------------------------------------------------:|
+|:------|:--------------|:------------------------------------------------|
 |CH1 	|0x00		    | Van 1 (thùng nước -> thùng tưới)|
 |CH2	|0x01		    | Van 2 (thùng dinh dưỡng -> thùng tưới)|
 |CH3 	|0x02		    | Máy bơm hóa chất (Pump_1)|
@@ -13,7 +13,7 @@
 
 ## List địa chỉ của 3 cảm biến RS485:
 |Slave_address	|Device              |
-|:--------------|-------------------:|
+|:--------------|:-------------------|
 |0x01		    |Soil 7in1           |
 |0x02    		|CO2                 |
 |0x03	    	|Humidity Temperature|
