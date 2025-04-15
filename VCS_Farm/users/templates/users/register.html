@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Đăng ký</title>
+  <link rel="stylesheet" href="{% static 'css/user.css' %}">
+</head>
+<body>
+  <h2>Đăng ký</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Đăng ký</button>
+  </form>
+  <p>Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập</a></p>
+</body>
+</html>
