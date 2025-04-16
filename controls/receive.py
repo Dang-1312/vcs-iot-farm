@@ -73,10 +73,10 @@ def received(client, userdata, msg):
         # if check_error != "Success":
         #     report_error(check_error)
     elif payload.get("action") == "mist":
-        status = control.mist(status)
         if payload.get("data") == 0:
             status = 0
-
+        elif payload.get("data") == 1:
+            status = control.mist(status)
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
