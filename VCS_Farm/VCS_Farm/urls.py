@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('sensor_data.urls')),
     path('', include('users.urls')),
+    path('', include('standard_data.urls')),
 ]

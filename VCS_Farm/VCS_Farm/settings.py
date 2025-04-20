@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,6 +43,8 @@ INSTALLED_APPS = [
     'sensor_data',
     'standard_data',
     'users',
+
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 USE_I18N = True
 
@@ -141,3 +144,19 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Install Celery and configurate Celery Beat
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+
+CELERY_BEAT_SCHEDULE = {
+    "check_irrigation_task": {
+        "task": "sensor_data.tasks.check_and_publish_irrigation",
+        "schedule": crontab(hour="9,17", minute=15),
+    },
+    "check_mist_task": {
+        "task": "sensor_data.tasks.check_and_publish_mist",
+        "schedule": crontab(hour="11-13", minute="*/11"),
+    },
+}
