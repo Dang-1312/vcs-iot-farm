@@ -4,6 +4,7 @@ from rest_framework import status
 from .models import SensorData
 from .serializers import SensorDataSerializer
 from django.shortcuts import render
+from users.decorators import login_required_custom
 
 # Create your views here.
 class SensorDataAPIView(APIView):
@@ -18,6 +19,7 @@ class SensorDataAPIView(APIView):
         return Response({"message": "GET request received successfully!"}, status=status.HTTP_200_OK)
 
 # User dashboard view
+@login_required_custom
 def DashboardView(request):
     latest_data = SensorData.objects.order_by('-timestamp')[:144][::-1]  # Retrieve the latest 144 records
 

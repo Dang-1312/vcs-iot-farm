@@ -1,9 +1,30 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from .models import StandardData
 from .forms import StandardDataForm
+from users.decorators import login_required_custom
 
 # Create your views here.
+@login_required_custom
 def StandardView(request):
+    # Check login status
+    user_id = request.session.get('user_id')
+    role = request.session.get('role')
+
+    if not user_id:
+        return redirect('login')
+
+    if role != 'admin':
+        # Show a notification and refresh the page or redirect to dashboard
+        return HttpResponse("""
+            <script>
+                alert("Bạn không có quyền truy cập trang này.");
+                setTimeout(function() {
+                    window.location.href = document.referrer || '/dashboard';
+                }, 2000);   //set Timeout 2 seconds
+            </script>
+        """)
+    
     latest_record = StandardData.objects.latest('created_at')
 
     if request.method == 'POST':
