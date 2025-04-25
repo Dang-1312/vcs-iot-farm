@@ -7,12 +7,8 @@ from users.decorators import login_required_custom
 # Create your views here.
 @login_required_custom
 def StandardView(request):
-    # Check login status
-    user_id = request.session.get('user_id')
+    # Check role "admin"
     role = request.session.get('role')
-
-    if not user_id:
-        return redirect('login')
 
     if role != 'admin':
         # Show a notification and refresh the page or redirect to dashboard
