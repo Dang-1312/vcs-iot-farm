@@ -37,7 +37,7 @@ def StandardView(request):
             instance.max_temperature = round(instance.max_temperature, 1)
             # Save the data after rounding
             instance.save()
-            return redirect('input')
+            return redirect('standard_input')
     else:
         form = StandardDataForm()
     

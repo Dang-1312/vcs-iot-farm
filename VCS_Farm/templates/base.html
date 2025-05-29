@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VCS Farm{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-light">
+        <!-- Top Bar - Logo, Site Name, Login/Logout -->
+        <div class="container-fluid py-3 border-bottom">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img src="{% static 'images/logo.png' %}" alt="Logo" height="60" class="me-4">
+                    <h1 class="fw-bold text-dark-blue d-flex align-items-center h-100 m-0" style="font-size: 1.75rem;">VCS Farm System</h1>
+                </div>
+                <div>
+                    {% if request.session.user_id %}
+                        <div class="d-flex align-items-center">
+                            <span class="me-2">Xin chào, {{ request.session.username }} ({{ request.session.role }})</span>
+                            <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Đăng xuất</a>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Đăng nhập</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/dashboard' %}active{% endif %}" 
+                               href="{% url 'dashboard' %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/standard_input' %}active{% endif %}" 
+                               href="{% url 'standard_input' %}">Standard Input</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-bell-fill"></i>
+                                {% if nutrient_alert %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    !
+                                </span>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                                {% if nutrient_alert %}
+                                <li>
+                                    <a class="dropdown-item text-warning" href="#">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        {{ nutrient_alert }}
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        No alerts
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light py-3 border-top text-center">
+        <p class="mb-0">© 2025 Valley Campus Sai Gon. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block js %}{% endblock %}
+</body>
+</html>

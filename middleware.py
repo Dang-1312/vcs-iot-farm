@@ -48,8 +48,10 @@ def post_data(msg):
     try:
         response = requests.post(api_url, json=msg, timeout=5)  # 5 seconds timeout
         if response.status_code == 201:
+            print(f"Data sent successfully: {msg}")
             logging.info(f"Data sent successfully: {msg}")
         else:
+            print(f"HTTP error {response.status_code}: {response.text}")
             logging.warning(f"HTTP error {response.status_code}: {response.text}")
             unsent_data_queue.put(msg)  # Add failed data to queue
     except requests.exceptions.RequestException as e:
@@ -60,7 +62,7 @@ def post_data(msg):
 def retry_unsent_data():
     while True:
         if not unsent_data_queue.empty():
-            response = requests.get("http://127.0.0.1:8000/api/sensor_data/", timeout=5)  # 5 seconds timeout
+            response = requests.get("http://localhost:8000/api/sensor_data/", timeout=5)  # 5 seconds timeout
             if response.status_code == 200:
                 data = unsent_data_queue.get()
                 logging.info(f"Retrying to send data: {data}")

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-q3%(227^q=n5li69wocph@c-*n@)+nwrrp1)88e5x6c!o-82$@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.81']
 
 # CONFIGURE SESSION TO RUN AS A COOKIE-BASED SESSION
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
@@ -72,7 +72,7 @@ ROOT_URLCONF = 'VCS_Farm.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,9 +80,12 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'sensor_data.context_processors.nutrient_alert',
             ],
         },
     },
+    
 ]
 
 WSGI_APPLICATION = 'VCS_Farm.wsgi.application'
@@ -149,6 +152,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
