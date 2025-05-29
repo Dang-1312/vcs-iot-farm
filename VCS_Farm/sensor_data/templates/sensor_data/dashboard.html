@@ -1,11 +1,9 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
+
+{% block title %}Dashboard - VCS Farm{% endblock %}
+
+{% block content %}
     <h1>Dashboard - Biểu đồ theo thời gian</h1>
 
     <canvas id="soilMoistureChart"></canvas>
@@ -17,6 +15,7 @@
     <canvas id="humidityChart"></canvas>
     <canvas id="airTempChart"></canvas>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const labels = [
             {% for record in data %}
@@ -82,8 +81,8 @@
             {% endfor %}
         ];
 
-        // Tạo chart
-        function createChart(id, label, data, borderColor = 'blue') {
+        // Create chart function
+        function createChart(id, label, data, borderColor, min, max = null) {
             new Chart(document.getElementById(id), {
                 type: 'line',
                 data: {
@@ -94,13 +93,22 @@
                         borderColor: borderColor,
                         fill: false
                     }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: min,
+                            max: max
+                        }
+                    }
                 }
             });
         }
 
-        createChart("soilMoistureChart", "Độ ẩm đất", soilMoistureData, 'green');
-        createChart("soilTempChart", "Nhiệt độ đất", soilTempData, 'orange');
-        createChart("ecChart", "EC", ecData, 'purple');
+        createChart("soilMoistureChart", "Độ ẩm đất", soilMoistureData, 'green', 0, 100);
+        createChart("soilTempChart", "Nhiệt độ đất", soilTempData, 'orange', 0, 80);
+        createChart("ecChart", "EC", ecData, 'purple', 0);
 
         new Chart(document.getElementById("npkChart"), {
             type: 'line',
@@ -111,13 +119,19 @@
                     { label: 'P', data: pData, borderColor: 'blue', fill: false },
                     { label: 'K', data: kData, borderColor: 'green', fill: false },
                 ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    }
+                }
             }
         });
 
-        createChart("phChart", "pH", phData, 'brown');
-        createChart("co2Chart", "CO2", co2Data, 'gray');
-        createChart("humidityChart", "Độ ẩm không khí", humidityData, 'cyan');
-        createChart("airTempChart", "Nhiệt độ không khí", airTempData, 'magenta');
+        createChart("phChart", "pH", phData, 'brown', 0, 14);
+        createChart("co2Chart", "CO2", co2Data, 'gray', 0, 5000);
+        createChart("humidityChart", "Độ ẩm không khí", humidityData, 'cyan', 0, 100);
+        createChart("airTempChart", "Nhiệt độ không khí", airTempData, 'magenta', 0, 60);
     </script>
-</body>
-</html>
+{% endblock %}
