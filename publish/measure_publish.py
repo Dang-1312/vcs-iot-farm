@@ -1,5 +1,6 @@
 import time
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import json
 import psycopg2
 import logging
@@ -79,7 +80,7 @@ try:
         # Measure Soil Moisture & Temperature
         logging.info("Start measure Soil Moisture & Temperature")
         data = rs485.read_sensor_rtu(register_address=0x12,num_registers=0x02,slave_address=0x01)
-        mois_soil = min(round((data[0]/10*2), 1), 100)
+        mois_soil = min(round((data[0]/10*1.88), 1), 100)       # *532-1.88*
         temp_soil = data[1]/10
         time.sleep(1)
         
@@ -101,6 +102,8 @@ try:
         logging.info("Start measure Soil pH")
         data = rs485.read_sensor_rtu(register_address=0x06,num_registers=0x01,slave_address=0x01)
         pH = data[0]/100
+        if pH < 4.5:
+            pH = round((pH*1.7),2)
         time.sleep(1)
         
         # Measure Rika's sensors
@@ -129,7 +132,7 @@ try:
                     "co2": CO2,
                     "temp_air": Temperature_Air,
                     "hum_air": Humidity_Air,  
-                    "timestamp": datetime.utcnow().isoformat()          
+                    "timestamp": datetime.now(ZoneInfo("Asia/Ho_Chi_Minh")).isoformat()          
                 }
         print(message)
         logging.info("Dictionary: %s", json.dumps(message))     
@@ -138,7 +141,7 @@ try:
 
         # Wait 10 minute
         end=time.time()
-        wait=180+start-end
+        wait=600+start-end
         if wait > 0 :
             time.sleep(wait)
         else:
