@@ -1,7 +1,8 @@
 import paho.mqtt.client as mqtt
 import json
 import time
-import datetime
+from datetime import datetime
+from zoneinfo import ZoneInfo
 import requests
 import logging
 
@@ -28,21 +29,21 @@ def read_credentials(file_path):
 USERNAME, PASSWORD = read_credentials("/home/pi/Downloads/final/envPi/mqtt_credential.txt")
 
 
-"""def report_error(error):
+def report_error(error):
+    retries = 0
     print(error)
-    url = "http://127.0.0.1:8000/api/report_error/"
+    url = "http://192.168.1.81:8000/api/report_error/"
     # Error data to be sent
     error_data = {
-        "error_message": str(error),
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+        "error_message": str(error), # "Warning" or "Success"
+        "timestamp": datetime.now(ZoneInfo("Asia/Ho_Chi_Minh")).isoformat()
     }
-    retries = 0
     try:
         while retries < 3:
             # Send POST request to Django REST API
             response = requests.post(url, json=error_data)
             # Check server response
-            if response.status_code == 200:
+            if response.status_code == 201 or response.status_code == 200:
                 print("Error report sent successfully.")
                 return
             else:
@@ -53,7 +54,7 @@ USERNAME, PASSWORD = read_credentials("/home/pi/Downloads/final/envPi/mqtt_crede
             time.sleep(5)
         logging.warning(f"Failed to send error report after {3} attempts.")
     except requests.exceptions.RequestException as e:
-        print(f"Error reporting failed: {e}")"""
+        print(f"Error reporting failed: {e}")
 
 
 def received(client, userdata, msg):
@@ -70,8 +71,7 @@ def received(client, userdata, msg):
         print(f"Triggering irrigation with data: {payload.get('data')}")
         check_error = control.irrigate(payload.get("data"))
         print(f"Irrigation result: {check_error}")
-        # if check_error != "Success":
-        #     report_error(check_error)
+        report_error(check_error)
     elif payload.get("action") == "mist":
         if payload.get("data") == 0:
             status = 0
@@ -112,7 +112,7 @@ def main():
             except Exception as e:
                 print(f"Reconnect failed: {e}")
         # Check datetime and reset "status"
-        now = datetime.datetime.now()
+        now = datetime.now()
         h = now.hour
         if not 11 <= h < 14:
             if status != 0:
