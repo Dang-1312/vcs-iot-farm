@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - VCS Farm{% endblock %}
+
+{% block content %}
+    <h1>Dashboard - Biểu đồ theo thời gian</h1>
+
+    <canvas id="soilMoistureChart"></canvas>
+    <canvas id="soilTempChart"></canvas>
+    <canvas id="ecChart"></canvas>
+    <canvas id="npkChart"></canvas>
+    <canvas id="phChart"></canvas>
+    <canvas id="co2Chart"></canvas>
+    <canvas id="humidityChart"></canvas>
+    <canvas id="airTempChart"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const labels = [
+            {% for record in data %}
+                "{{ record.timestamp|date:'H:i:s' }}",
+            {% endfor %}
+        ];
+
+        const soilMoistureData = [
+            {% for record in data %}
+                {{ record.soil_moisture }},
+            {% endfor %}
+        ];
+
+        const soilTempData = [
+            {% for record in data %}
+                {{ record.soil_temperature }},
+            {% endfor %}
+        ];
+
+        const ecData = [
+            {% for record in data %}
+                {{ record.ec }},
+            {% endfor %}
+        ];
+
+        const nData = [
+            {% for record in data %}
+                {{ record.soil_nitrogen }},
+            {% endfor %}
+        ];
+        const pData = [
+            {% for record in data %}
+                {{ record.soil_phosphorus }},
+            {% endfor %}
+        ];
+        const kData = [
+            {% for record in data %}
+                {{ record.soil_potassium }},
+            {% endfor %}
+        ];
+
+        const phData = [
+            {% for record in data %}
+                {{ record.ph }},
+            {% endfor %}
+        ];
+
+        const co2Data = [
+            {% for record in data %}
+                {{ record.co2 }},
+            {% endfor %}
+        ];
+
+        const humidityData = [
+            {% for record in data %}
+                {{ record.hum_air }},
+            {% endfor %}
+        ];
+
+        const airTempData = [
+            {% for record in data %}
+                {{ record.temp_air }},
+            {% endfor %}
+        ];
+
+        // Create chart function
+        function createChart(id, label, data, borderColor, min, max = null) {
+            new Chart(document.getElementById(id), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        borderColor: borderColor,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: min,
+                            max: max
+                        }
+                    }
+                }
+            });
+        }
+
+        createChart("soilMoistureChart", "Độ ẩm đất", soilMoistureData, 'green', 0, 100);
+        createChart("soilTempChart", "Nhiệt độ đất", soilTempData, 'orange', 0, 80);
+        createChart("ecChart", "EC", ecData, 'purple', 0);
+
+        new Chart(document.getElementById("npkChart"), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'N', data: nData, borderColor: 'red', fill: false },
+                    { label: 'P', data: pData, borderColor: 'blue', fill: false },
+                    { label: 'K', data: kData, borderColor: 'green', fill: false },
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    }
+                }
+            }
+        });
+
+        createChart("phChart", "pH", phData, 'brown', 0, 14);
+        createChart("co2Chart", "CO2", co2Data, 'gray', 0, 5000);
+        createChart("humidityChart", "Độ ẩm không khí", humidityData, 'cyan', 0, 100);
+        createChart("airTempChart", "Nhiệt độ không khí", airTempData, 'magenta', 0, 60);
+    </script>
+{% endblock %}
