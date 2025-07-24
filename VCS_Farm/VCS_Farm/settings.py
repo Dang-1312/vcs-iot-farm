@@ -8,6 +8,13 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
+
+------------------------------------------------------------
+Developer: Dang Nguyen
+Email: minhdangnc@gmail.com
+Please contact the developer above if you have any questions
+or need support regarding this configuration.
+------------------------------------------------------------
 """
 
 from pathlib import Path
@@ -37,7 +44,7 @@ SESSION_COOKIE_AGE = 3600
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False   # Set to True in production if using HTTPS
 
 # Application definition
 
@@ -55,6 +62,7 @@ INSTALLED_APPS = [
     'users',
 
     'django_celery_beat',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -170,7 +178,7 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_BEAT_SCHEDULE = {
     "check_irrigation_task": {
         "task": "sensor_data.tasks.check_and_publish_irrigation",
-        "schedule": crontab(hour="9,17", minute=15),
+        "schedule": crontab(hour="7,17", minute=15),
     },
     "check_mist_task": {
         "task": "sensor_data.tasks.check_and_publish_mist",
