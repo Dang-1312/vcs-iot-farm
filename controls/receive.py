@@ -1,7 +1,7 @@
 """
 ---------------------------------------------------------------------
 Developer: Dang Nguyen
-Email: dangnguyen@gmail.com
+Email: minhdangnc@gmail.com
 Please contact the developer above if you have any questions
 or need support regarding this configuration.
 ---------------------------------------------------------------------
