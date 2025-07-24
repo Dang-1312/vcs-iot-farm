@@ -39,22 +39,21 @@ def DashboardView(request):
 class NutrientAlertAPIView(APIView):
     def post(self, request):
         serializer = NutrientAlertSerializer(data=request.data)
+
         if serializer.is_valid():
             message = serializer.validated_data.get('error_message')
             timestamp = serializer.validated_data.get('timestamp')
             if message == "Warning":
                 serializer.save()
                 return Response({"message": "Warning saved."}, status=status.HTTP_201_CREATED)
-
-        elif message == "Success":
-            latest_record = NutrientAlert.objects.first()  # vì ordering = ['-timestamp']
-            if latest_record and latest_record.error_message == "Warning":
-                serializer.save()
-                return Response({"message": "Success saved after Warning."}, status=status.HTTP_201_CREATED)
-            else:
-                return Response({"message": "No need to save Success."}, status=status.HTTP_200_OK)
-
+            elif message == "Success":
+                latest_record = NutrientAlert.objects.latest()
+                if latest_record and latest_record.error_message == "Warning":
+                    serializer.save()
+                    return Response({"message": "Success saved after Warning."}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({"message": "No need to save Success."}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid error_message value."}, status=status.HTTP_400_BAD_REQUEST)
-
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
