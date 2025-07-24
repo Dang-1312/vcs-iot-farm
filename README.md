@@ -1,4 +1,13 @@
 # vcs-iot-farm
+
+---
+
+**Developer:** Dang Nguyen  
+**Email:** minhdangnc@gmail.com  
+*For any questions or support regarding this project, please contact the developer above.*
+
+---
+
 ## Bảng channel relay và địa chỉ tương ứng với các thiết bị:
 |Channel	|Relay address	|Device|
 |:------|:--------------|:------------------------------------------------|

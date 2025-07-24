@@ -1,3 +1,12 @@
+"""
+---------------------------------------------------------------------
+Developer: Dang Nguyen
+Email: dangnguyen@example.com
+Please contact the developer above if you have any questions
+or need support regarding this configuration.
+---------------------------------------------------------------------
+"""
+
 import paho.mqtt.client as mqtt
 import json
 import time
@@ -8,7 +17,7 @@ import logging
 
 import control
 
-logging.basicConfig(filename='/home/pi/Downloads/final/envPi/publish.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='/home/pi/Downloads/final/envPi/receive.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # MQTT Broker Configuration
 BROKER = "192.168.1.81"         # IP của máy chủ chạy Mosquitto
@@ -61,32 +70,42 @@ def received(client, userdata, msg):
     global status
     try:
         print(f"Raw payload received: {msg.payload}")
+        logging.info(f"Raw payload received: {msg.payload}")
         payload = json.loads(msg.payload.decode("utf-8"))
         print(f"Decoded JSON: {payload}")
+        logging.info(f"Decoded JSON: {payload}")
     except json.JSONDecodeError:
         print("Received invalid JSON payload")
         logging.error("Received invalid JSON payload")
         return
     if payload.get("action") == "irrigation":
         print(f"Triggering irrigation with data: {payload.get('data')}")
+        logging.info(f"Triggering irrigation with data: {payload.get('data')}")
         check_error = control.irrigate(payload.get("data"))
         print(f"Irrigation result: {check_error}")
+        logging.info(f"Irrigation result: {check_error}")
         report_error(check_error)
     elif payload.get("action") == "mist":
         if payload.get("data") == 0:
             status = 0
+            logging.info("Mist action: turning off mist (status set to 0)")
         elif payload.get("data") == 1:
             status = control.mist(status)
+            logging.info(f"Mist action: toggling mist (new status: {status})")
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to MQTT Broker!")
+        logging.info("Connected to MQTT Broker!")
         client.subscribe(TOPIC)
+        logging.info(f"Subscribed to topic: {TOPIC}")
     else:
         print(f"Failed to connect, return code {rc}")
+        logging.error(f"Failed to connect, return code {rc}")
 
 
 def on_message(client, userdata, msg):
+    print(f"Received message on topic {msg.topic}: {msg.payload.decode()}")
     logging.info(f"Received message on topic {msg.topic}")
     received(client, userdata, msg)
 
