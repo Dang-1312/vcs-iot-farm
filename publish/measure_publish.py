@@ -1,3 +1,12 @@
+"""
+---------------------------------------------------------------------
+Developer: Dang Nguyen
+Email: minhdangnc@gmail.com
+Please contact the developer above if you have any questions
+or need support regarding this configuration.
+---------------------------------------------------------------------
+"""
+
 import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -80,7 +89,7 @@ try:
         # Measure Soil Moisture & Temperature
         logging.info("Start measure Soil Moisture & Temperature")
         data = rs485.read_sensor_rtu(register_address=0x12,num_registers=0x02,slave_address=0x01)
-        mois_soil = min(round((data[0]/10*1.88), 1), 100)       # *532-1.88*
+        mois_soil = min(round((data[0]/10*2.5), 1), 100)       # 400-2.5 340-2.94 360-2.78 532-1.88 210-4.76
         temp_soil = data[1]/10
         time.sleep(1)
         
