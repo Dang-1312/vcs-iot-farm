@@ -18,7 +18,7 @@
 |CH5 	|0x04		    | Máy bơm phun sương (Pump_3)|
 |CH6	|0x05		    | Van 4 (vòi nước sinh hoạt -> thùng nước)|
 |CH7	|0x06		    | Van 3 (thùng tưới -> máy bơm tưới)|
-|CH8	|0x07		    | Cấp nguồn 12V cho RS485 sensors|
+|CH8	|0x07		    | Công tắc nguồn 12V cho RS485 sensors|
 
 ## List địa chỉ của 3 cảm biến RS485:
 |Slave_address	|Device              |
@@ -27,12 +27,9 @@
 |0x02    		|CO2                 |
 |0x03	    	|Humidity Temperature|
 
-## Một số thông số khác
-- Tỉ lệ phân bón trong thùng 2 **~210gram/30 lít** <=> EC **~7.5 mS/cm**
-- Nồng độ EC trong thùng tưới nếu pha đúng tỉ lệ EC **~0.23 mS/cm**
-- Tỉ lệ thời gian bơm thùng 2 / thùng 1 **~4/296 giây**
-- Thể tích đất trong thùng xốp trồng cây **~ 90 lít**
-- Máy bơm tưới bơm ra **~0,55 lít/béc/phút**
-- Thời gian để bơm đầy thùng nước (từ mức 1 đến mức 3) **~351 giây**
-- Thời gian để tưới hết nước trong thùng tưới ra **~592 giây/50 lít**
-- Thời gian để bơm đầy thùng trộn 50 lít (từ đáy thùng (mức 1) đến đầy thùng (mức 3)) **~5 phút**
+## Tổng quan về các apps trong Django project VCS_Farm:
+|Tên app   |Trách nhiệm   |Table DB chính  |
+|:------|:------------------------------------------------|:--------------|
+|sensor_data   |Các chức năng liên quan việc nhập xuất dữ liệu của cảm biến   |SensorData   |
+|standard_data  |Các chức năng liên quan việc nhập xuất dữ liệu tiêu chuẩn   |StandardData   |
+|users   |Các chức năng liên quan việc thao tác với dữ liệu người dùng   |UserData   |
